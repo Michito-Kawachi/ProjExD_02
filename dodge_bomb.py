@@ -34,6 +34,10 @@ def main():
     kk_img_flip = pg.transform.flip(kk_img, True, False)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
+
+    """#Issue2: 辞書の説明"""
+    # 上下左右のキーをキー、その移動量を値とした辞書
+    # キーはpygameのkeyモジュール。値はタプル（x座標, y座標）
     move_dct = {
         pg.K_UP: (0, -5),
         pg.K_DOWN: (0, +5), 
