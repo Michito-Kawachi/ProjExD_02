@@ -6,6 +6,20 @@ import pygame as pg
 WIDTH, HEIGHT = 1600, 900
 
 
+def CheckBound(obj_rct: pg.Rect):
+    """
+    引数: こうかとんRect or 爆弾Rect
+    戻り値: タプル（横方向判定結果, 縦方向判定結果）
+    画面内ならTrue 画面外ならFalse
+    """
+    yoko, tate = True, True
+    if obj_rct.left < 0 or WIDTH < obj_rct.right: # 横方向判定
+        yoko = False
+    if obj_rct.top < 0 or HEIGHT < obj_rct.bottom: # 縦方向判定
+        tate = False
+    return yoko, tate
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -36,9 +50,8 @@ def main():
     pg.draw.circle(bomb, (255, 0, 0), (10, 10), 10)
     bomb.set_colorkey("black")
 
-    
-
     tmr = 0
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -51,8 +64,6 @@ def main():
         tmr += 1
 
         """移動処理"""
-        bb_rct.move_ip(vx, vy) # 爆弾移動
-
         # こうかとん移動
         key_lst = pg.key.get_pressed()
         kk_move = [0, 0]
@@ -60,7 +71,19 @@ def main():
             if key_lst[key]:
                 kk_move[0] += mv[0]
                 kk_move[1] += mv[1]
-        kk_rct.move_ip(kk_move)
+        
+        kk_rct.move_ip(kk_move) # こうかとん移動
+
+        # こうかとん画面外チェック
+        if CheckBound(kk_rct) != (True, True):
+            kk_rct.move_ip(-kk_move[0], -kk_move[1])
+        
+        # 爆弾画面外チェック
+        yoko, tate = CheckBound(bb_rct)
+        if not yoko: vx *= -1
+        if not tate: vy *= -1
+
+        bb_rct.move_ip(vx, vy) # 爆弾移動
 
         clock.tick(50)
 
