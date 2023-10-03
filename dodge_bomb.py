@@ -56,6 +56,11 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
+        
+        """接触判定"""
+        if kk_rct.colliderect(bb_rct): # 衝突: True
+            print("ゲームオーバー")
+            return
 
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_img, kk_rct)
