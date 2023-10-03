@@ -28,6 +28,7 @@ def main():
     # こうかとん
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_img_flip = pg.transform.flip(kk_img, True, False)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     move_dct = {
@@ -35,6 +36,18 @@ def main():
         pg.K_DOWN: (0, +5), 
         pg.K_LEFT: (-5, 0),
         pg.K_RIGHT: (+5, 0)
+    }
+    # 追加機能1
+    kk_rote = {
+        (-5, 0): kk_img,
+        (-5, -5): pg.transform.rotozoom(kk_img, -45, 1.0),
+        (0, -5): pg.transform.rotozoom(kk_img_flip, 90, 1.0),
+        (+5, -5): pg.transform.rotozoom(kk_img_flip, 45, 1.0),
+        (+5, 0): kk_img_flip,
+        (+5, +5): pg.transform.rotozoom(kk_img_flip, -45, 1.0),
+        (0, +5): pg.transform.rotozoom(kk_img_flip, -90, 1.0),
+        (-5, +5): pg.transform.rotozoom(kk_img, 45, 1.0),
+        (0, 0): kk_img
     }
     
     clock = pg.time.Clock()
@@ -62,16 +75,13 @@ def main():
             print("ゲームオーバー")
             return
 
-        screen.blit(bg_img, [0, 0])
-        screen.blit(kk_img, kk_rct)
-        screen.blit(bomb, bb_rct)
         pg.display.update()
         tmr += 1
+        kk_move = [0, 0]
 
         """移動処理"""
         # こうかとん移動
         key_lst = pg.key.get_pressed()
-        kk_move = [0, 0]
         for key, mv in move_dct.items():
             if key_lst[key]:
                 kk_move[0] += mv[0]
@@ -91,6 +101,11 @@ def main():
         bb_rct.move_ip(vx, vy) # 爆弾移動
 
         clock.tick(50)
+
+        screen.blit(bg_img, [0, 0])
+        # 追加機能1: 回転こうかとん
+        screen.blit(kk_rote[tuple(kk_move)], kk_rct)
+        screen.blit(bomb, bb_rct)
 
 
 if __name__ == "__main__":
