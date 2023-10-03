@@ -37,6 +37,7 @@ def main():
         pg.K_LEFT: (-5, 0),
         pg.K_RIGHT: (+5, 0)
     }
+
     # 追加機能1
     kk_rote = {
         (-5, 0): kk_img,
@@ -53,15 +54,25 @@ def main():
     clock = pg.time.Clock()
 
     # 爆弾
+    # bomb = pg.Surface((20, 20))
+    # pg.draw.circle(bomb, (255, 0, 0), (10, 10), 10)
+
+    #追加機能2: 爆弾が加速&拡大
+    accs = [a for a in range(1, 11)]
+    bombs = []
     bomb = pg.Surface((20, 20))
+    bb_rct = bomb.get_rect()
+    for r in range(1, 11):
+        bomb = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bomb, (255, 0, 0), (10*r, 10*r), 10*r)
+        bomb.set_colorkey("black")
+        bombs.append(bomb)
+        
     bb_x: int = randint(0, WIDTH)
     bb_y: int = randint(0, HEIGHT)
     vx: int = +5
     vy: int = +5
-    bb_rct = bomb.get_rect()
     bb_rct.center = bb_x, bb_y
-    pg.draw.circle(bomb, (255, 0, 0), (10, 10), 10)
-    bomb.set_colorkey("black")
 
     tmr = 0
 
@@ -97,8 +108,12 @@ def main():
         yoko, tate = CheckBound(bb_rct)
         if not yoko: vx *= -1
         if not tate: vy *= -1
-
-        bb_rct.move_ip(vx, vy) # 爆弾移動
+        
+        # 追加機能2: 爆弾拡大&加速
+        # 進行時間に応じて適切なサイズ・速度を選択
+        avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]
+        bomb = bombs[min(tmr//500, 9)] 
+        bb_rct.move_ip(avx, avy) # 爆弾移動
 
         clock.tick(50)
 
