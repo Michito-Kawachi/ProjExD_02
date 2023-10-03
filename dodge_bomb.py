@@ -1,5 +1,6 @@
 from random import randint
 import sys
+import time
 import pygame as pg
 
 
@@ -24,6 +25,8 @@ def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
+    end_img = pg.image.load("ex02/fig/6.png")
+    end_img = pg.transform.rotozoom(end_img, 0, 3.0)
 
     # こうかとん
     kk_img = pg.image.load("ex02/fig/3.png")
@@ -83,6 +86,11 @@ def main():
         
         """接触判定"""
         if kk_rct.colliderect(bb_rct): # 衝突: True
+            # 機能追加3: エンドカード
+            screen.blit(bg_img, [0, 0])
+            screen.blit(end_img, kk_rct)
+            pg.display.update()
+            time.sleep(2)
             print("ゲームオーバー")
             return
 
@@ -112,7 +120,7 @@ def main():
         # 追加機能2: 爆弾拡大&加速
         # 進行時間に応じて適切なサイズ・速度を選択
         avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]
-        bomb = bombs[min(tmr//500, 9)] 
+        bomb = bombs[min(tmr//500, 9)]         
         bb_rct.move_ip(avx, avy) # 爆弾移動
 
         clock.tick(50)
